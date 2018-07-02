@@ -88,38 +88,41 @@ router.post('/register', (req, res) => {
         errors: errors,
         name: req.body.username,
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
+        phone : req.body.phone
       })
     }
     else {
-      if (!req.body.username || req.body.username.length < 4) {
-        errors.push({ text: 'Username can\'t be empty or less than 4' })
-      }
+      // if (!req.body.username || req.body.username.length < 4) {
+      //   errors.push({ text: 'Username can\'t be empty or less than 4' })
+      // }
 
-      if (!req.body.email) {
-        errors.push({ text: 'Email can\'t be empty' })
-      }
+      // if (!req.body.email) {
+      //   errors.push({ text: 'Email can\'t be empty' })
+      // }
 
-      if (!req.body.password) {
-        errors.push({ text: 'Password can\'t be empty' })
-      }
+      // if (!req.body.password) {
+      //   errors.push({ text: 'Password can\'t be empty' })
+      // }
 
-      if (errors.length > 0) {
-        res.render('register', {
-          errors: errors,
-          name: req.body.username,
-          email: req.body.email,
-          password: req.body.password
-        })
-      }
+      // if (errors.length > 0) {
+      //   res.render('register', {
+      //     errors: errors,
+      //     name: req.body.username,
+      //     email: req.body.email,
+      //     password: req.body.password
+      //   })
+      // }
       var newUserMysql = new Object();
 
       newUserMysql.email = req.body.email;
       newUserMysql.username = req.body.username;
       newUserMysql.password = req.body.password;
+      newUserMysql.phone = req.body.phone;
+
       var hash = crypto.createHash('sha256').update(req.body.password).digest('base64');
       newUserMysql.password = hash;
-      var insertQuery = "INSERT INTO user ( email, username, password ) values ('" + req.body.email + "','" + req.body.username + "','" + newUserMysql.password + "')";
+      var insertQuery = "INSERT INTO user ( email, username, password , phone_number ) values ('" + req.body.email + "','" + req.body.username + "','" + newUserMysql.password + "','" + newUserMysql.phone + "')";
       connection.query(insertQuery, function (err, rows) {
         req.flash('success_msg', 'User Registered');
         res.redirect('/');
@@ -138,6 +141,10 @@ router.get('/logout', (req, res) => {
 
 router.get('/customers', verifyJWT, (req, res) => {
     res.render('customers');
+});
+
+router.get('/users', verifyJWT, (req, res) => {
+  res.render('users');
 });
 
 router.get('/customers/add', verifyJWT, (req, res) => {
